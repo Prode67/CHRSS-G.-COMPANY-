@@ -1,0 +1,1275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chrss.G Company — Bus Booking System</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root {
+  --gold: #C9A84C;
+  --gold-light: #E8C97A;
+  --gold-dark: #9A7830;
+  --navy: #0B1C3D;
+  --navy-mid: #132545;
+  --navy-light: #1E3560;
+  --white: #F8F6F0;
+  --cream: #F2EDD7;
+  --red: #C0392B;
+  --green: #1A8F5C;
+  --text: #2C2C2C;
+  --muted: #7A7A7A;
+  --border: rgba(201,168,76,0.25);
+  --glass: rgba(255,255,255,0.06);
+  --shadow: 0 20px 60px rgba(0,0,0,0.4);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;background:var(--navy);color:var(--white);min-height:100vh;overflow-x:hidden;}
+
+/* ===== ANIMATED BG ===== */
+.bg-anim{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;}
+.bg-anim::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 20% 50%,rgba(201,168,76,0.08) 0%,transparent 60%),radial-gradient(ellipse at 80% 20%,rgba(30,53,96,0.8) 0%,transparent 50%),linear-gradient(135deg,#0B1C3D 0%,#132545 50%,#0B1C3D 100%);}
+.orb{position:absolute;border-radius:50%;filter:blur(80px);animation:orbFloat 8s ease-in-out infinite;}
+.orb1{width:400px;height:400px;background:rgba(201,168,76,0.07);top:-10%;left:-5%;animation-delay:0s;}
+.orb2{width:300px;height:300px;background:rgba(30,53,96,0.6);bottom:10%;right:-5%;animation-delay:3s;}
+.orb3{width:200px;height:200px;background:rgba(201,168,76,0.05);top:50%;left:50%;animation-delay:5s;}
+@keyframes orbFloat{0%,100%{transform:translate(0,0) scale(1);}33%{transform:translate(30px,-20px) scale(1.05);}66%{transform:translate(-20px,30px) scale(0.95);};}
+
+/* ===== LANDING PAGE ===== */
+#landing{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2rem;}
+.logo-badge{display:inline-flex;align-items:center;gap:0.7rem;background:var(--glass);border:1px solid var(--border);border-radius:50px;padding:0.5rem 1.2rem;margin-bottom:2rem;backdrop-filter:blur(10px);}
+.logo-badge i{color:var(--gold);font-size:1.2rem;}
+.logo-badge span{font-size:0.85rem;letter-spacing:0.15em;color:var(--gold);font-weight:500;}
+.landing-title{font-family:'Playfair Display',serif;font-size:clamp(3rem,8vw,7rem);font-weight:900;line-height:1;margin-bottom:0.5rem;background:linear-gradient(135deg,#fff 0%,var(--gold-light) 50%,#fff 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.landing-sub{font-size:1rem;color:var(--gold);letter-spacing:0.3em;text-transform:uppercase;margin-bottom:1.5rem;}
+.landing-desc{max-width:500px;color:rgba(255,255,255,0.6);line-height:1.8;margin-bottom:3rem;font-size:0.95rem;}
+.btn-group{display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;}
+.btn-primary{background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:#000;font-weight:700;padding:0.9rem 2.5rem;border-radius:50px;border:none;cursor:pointer;font-size:0.95rem;letter-spacing:0.05em;transition:all 0.3s;box-shadow:0 8px 30px rgba(201,168,76,0.3);}
+.btn-primary:hover{transform:translateY(-3px);box-shadow:0 15px 40px rgba(201,168,76,0.5);}
+.btn-outline{background:transparent;color:var(--gold);font-weight:600;padding:0.9rem 2.5rem;border-radius:50px;border:1.5px solid var(--gold);cursor:pointer;font-size:0.95rem;transition:all 0.3s;}
+.btn-outline:hover{background:rgba(201,168,76,0.1);transform:translateY(-3px);}
+.landing-stats{display:flex;gap:3rem;margin-top:4rem;flex-wrap:wrap;justify-content:center;}
+.stat{text-align:center;}
+.stat-num{font-family:'Playfair Display',serif;font-size:2.5rem;font-weight:700;color:var(--gold);}
+.stat-label{font-size:0.75rem;color:rgba(255,255,255,0.5);letter-spacing:0.15em;text-transform:uppercase;}
+.scroll-indicator{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);animation:bounce 2s infinite;}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0);}50%{transform:translateX(-50%) translateY(-10px);};}
+
+/* ===== AUTH MODALS ===== */
+.modal-overlay{display:none;position:fixed;inset:0;z-index:100;background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);align-items:center;justify-content:center;}
+.modal-overlay.active{display:flex;}
+.modal{background:linear-gradient(135deg,var(--navy-mid),var(--navy));border:1px solid var(--border);border-radius:20px;padding:2.5rem;width:90%;max-width:440px;position:relative;animation:modalIn 0.4s cubic-bezier(0.34,1.56,0.64,1);}
+@keyframes modalIn{from{opacity:0;transform:scale(0.8) translateY(30px);}to{opacity:1;transform:scale(1) translateY(0);};}
+.modal-close{position:absolute;top:1rem;right:1rem;background:none;border:none;color:var(--muted);cursor:pointer;font-size:1.2rem;transition:color 0.2s;}
+.modal-close:hover{color:var(--gold);}
+.modal-title{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;margin-bottom:0.3rem;}
+.modal-sub{font-size:0.85rem;color:var(--muted);margin-bottom:2rem;}
+.form-group{margin-bottom:1.2rem;}
+.form-label{display:block;font-size:0.8rem;letter-spacing:0.1em;color:var(--gold);margin-bottom:0.4rem;text-transform:uppercase;}
+.form-input{width:100%;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:10px;padding:0.8rem 1rem;color:var(--white);font-family:'DM Sans',sans-serif;font-size:0.95rem;transition:border-color 0.2s;}
+.form-input:focus{outline:none;border-color:var(--gold);}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+.auth-switch{text-align:center;margin-top:1.2rem;font-size:0.85rem;color:var(--muted);}
+.auth-switch a{color:var(--gold);cursor:pointer;text-decoration:none;}
+.role-tabs{display:flex;background:rgba(0,0,0,0.3);border-radius:10px;padding:0.3rem;margin-bottom:1.5rem;gap:0.3rem;}
+.role-tab{flex:1;padding:0.6rem;text-align:center;border-radius:7px;cursor:pointer;font-size:0.85rem;font-weight:600;transition:all 0.3s;border:none;color:var(--muted);background:transparent;}
+.role-tab.active{background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:#000;}
+
+/* ===== APP SHELL ===== */
+#app{display:none;position:relative;z-index:1;min-height:100vh;}
+#app.active{display:block;}
+.app-layout{display:grid;grid-template-columns:260px 1fr;min-height:100vh;}
+
+/* ===== SIDEBAR ===== */
+.sidebar{background:linear-gradient(180deg,var(--navy-mid) 0%,#0d1f3c 100%);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;left:0;top:0;bottom:0;width:260px;z-index:50;transition:transform 0.3s;}
+.sidebar-header{padding:1.5rem;border-bottom:1px solid var(--border);}
+.sidebar-logo{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700;color:var(--gold);display:flex;align-items:center;gap:0.6rem;}
+.sidebar-logo i{font-size:1.1rem;}
+.sidebar-tagline{font-size:0.7rem;color:var(--muted);margin-top:0.2rem;letter-spacing:0.1em;}
+.sidebar-user{padding:1rem 1.5rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:0.8rem;}
+.user-avatar{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-dark));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1rem;color:#000;flex-shrink:0;}
+.user-info-name{font-size:0.9rem;font-weight:600;}
+.user-info-role{font-size:0.72rem;color:var(--gold);letter-spacing:0.05em;}
+.sidebar-nav{flex:1;overflow-y:auto;padding:1rem 0;}
+.nav-section{padding:0.5rem 1.5rem;font-size:0.65rem;color:var(--muted);letter-spacing:0.15em;text-transform:uppercase;margin-top:0.5rem;}
+.nav-item{display:flex;align-items:center;gap:0.8rem;padding:0.75rem 1.5rem;cursor:pointer;transition:all 0.2s;border-left:3px solid transparent;font-size:0.9rem;color:rgba(255,255,255,0.6);}
+.nav-item:hover{background:rgba(201,168,76,0.08);color:var(--white);}
+.nav-item.active{background:rgba(201,168,76,0.12);color:var(--gold);border-left-color:var(--gold);}
+.nav-item i{width:18px;text-align:center;font-size:0.95rem;}
+.sidebar-footer{padding:1rem 1.5rem;border-top:1px solid var(--border);}
+.logout-btn{width:100%;display:flex;align-items:center;gap:0.6rem;padding:0.7rem 1rem;background:rgba(192,57,43,0.15);border:1px solid rgba(192,57,43,0.3);border-radius:10px;color:#e74c3c;cursor:pointer;font-size:0.85rem;font-weight:600;transition:all 0.2s;}
+.logout-btn:hover{background:rgba(192,57,43,0.3);}
+
+/* ===== MAIN CONTENT ===== */
+.main-content{margin-left:260px;min-height:100vh;display:flex;flex-direction:column;}
+.topbar{background:rgba(11,28,61,0.95);border-bottom:1px solid var(--border);padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(10px);position:sticky;top:0;z-index:40;}
+.topbar-title{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;}
+.topbar-right{display:flex;align-items:center;gap:1rem;}
+.topbar-badge{background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:#000;font-size:0.7rem;font-weight:700;padding:0.25rem 0.7rem;border-radius:50px;letter-spacing:0.05em;}
+.page{display:none;padding:2rem;flex:1;}
+.page.active{display:block;}
+
+/* ===== DASHBOARD CARDS ===== */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.5rem;margin-bottom:2rem;}
+.stat-card{background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:1.5rem;backdrop-filter:blur(10px);transition:transform 0.3s,box-shadow 0.3s;position:relative;overflow:hidden;}
+.stat-card::before{content:'';position:absolute;top:0;right:0;width:80px;height:80px;background:var(--gold);opacity:0.05;border-radius:0 0 0 80px;}
+.stat-card:hover{transform:translateY(-4px);box-shadow:0 20px 40px rgba(0,0,0,0.3);}
+.stat-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;margin-bottom:1rem;}
+.stat-icon.gold{background:rgba(201,168,76,0.15);color:var(--gold);}
+.stat-icon.blue{background:rgba(52,152,219,0.15);color:#3498db;}
+.stat-icon.green{background:rgba(26,143,92,0.15);color:var(--green);}
+.stat-icon.red{background:rgba(192,57,43,0.15);color:var(--red);}
+.stat-card-num{font-family:'Playfair Display',serif;font-size:2rem;font-weight:700;line-height:1;}
+.stat-card-label{font-size:0.8rem;color:var(--muted);margin-top:0.3rem;}
+.stat-card-change{font-size:0.75rem;color:var(--green);margin-top:0.5rem;}
+
+/* ===== SECTION HEADERS ===== */
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;}
+.section-title{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;}
+.section-badge{background:rgba(201,168,76,0.15);color:var(--gold);font-size:0.75rem;padding:0.3rem 0.8rem;border-radius:50px;border:1px solid var(--border);}
+
+/* ===== CARDS / PANELS ===== */
+.card{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:16px;overflow:hidden;}
+.card-header{padding:1.2rem 1.5rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:0.7rem;}
+.card-title{font-weight:600;font-size:1rem;}
+.card-body{padding:1.5rem;}
+
+/* ===== TABLES ===== */
+.data-table{width:100%;border-collapse:collapse;}
+.data-table th{font-size:0.75rem;letter-spacing:0.1em;color:var(--gold);padding:0.8rem 1rem;text-align:left;border-bottom:1px solid var(--border);text-transform:uppercase;}
+.data-table td{padding:0.9rem 1rem;border-bottom:1px solid rgba(255,255,255,0.05);font-size:0.9rem;}
+.data-table tr:last-child td{border:none;}
+.data-table tr:hover td{background:rgba(201,168,76,0.04);}
+.badge{display:inline-flex;align-items:center;gap:0.3rem;padding:0.25rem 0.7rem;border-radius:50px;font-size:0.75rem;font-weight:600;}
+.badge-green{background:rgba(26,143,92,0.15);color:#27ae60;}
+.badge-gold{background:rgba(201,168,76,0.15);color:var(--gold);}
+.badge-red{background:rgba(192,57,43,0.15);color:#e74c3c;}
+.badge-blue{background:rgba(52,152,219,0.15);color:#3498db;}
+
+/* ===== REVENUE CHART ===== */
+.chart-container{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:16px;padding:1.5rem;margin-bottom:2rem;}
+.chart-area{height:200px;position:relative;margin-top:1rem;}
+svg.chart{width:100%;height:100%;}
+
+/* ===== SEAT MAP ===== */
+.seat-map-container{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:16px;padding:1.5rem;}
+.bus-body{background:rgba(0,0,0,0.3);border:2px solid var(--gold);border-radius:20px;padding:1.5rem;position:relative;max-width:340px;margin:1rem auto;}
+.bus-front{text-align:center;margin-bottom:1rem;font-size:0.8rem;color:var(--muted);letter-spacing:0.1em;}
+.driver-area{display:flex;justify-content:flex-end;margin-bottom:1rem;}
+.driver-seat{width:36px;height:36px;border-radius:8px;background:rgba(201,168,76,0.3);border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;font-size:0.7rem;color:var(--gold);}
+.seat-grid{display:grid;grid-template-columns:1fr 1fr 8px 1fr 1fr;gap:6px;}
+.seat{width:36px;height:36px;border-radius:8px;border:1.5px solid;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:0.65rem;font-weight:600;transition:all 0.2s;}
+.seat.available{border-color:rgba(255,255,255,0.3);color:rgba(255,255,255,0.5);background:rgba(255,255,255,0.05);}
+.seat.available:hover{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,0.1);}
+.seat.selected{border-color:var(--gold);background:rgba(201,168,76,0.3);color:var(--gold);}
+.seat.booked{border-color:rgba(192,57,43,0.5);background:rgba(192,57,43,0.15);color:rgba(192,57,43,0.7);cursor:not-allowed;}
+.seat.vip{border-color:rgba(155,89,182,0.6);background:rgba(155,89,182,0.1);color:#9b59b6;}
+.seat-aisle{background:transparent;}
+.seat-legend{display:flex;gap:1rem;margin-top:1rem;flex-wrap:wrap;justify-content:center;}
+.legend-item{display:flex;align-items:center;gap:0.4rem;font-size:0.78rem;color:var(--muted);}
+.legend-dot{width:14px;height:14px;border-radius:4px;border:1.5px solid;}
+
+/* ===== PAYMENT ===== */
+.payment-methods{display:grid;grid-template-columns:repeat(2,1fr);gap:0.8rem;margin-bottom:1.5rem;}
+.pay-method{background:rgba(255,255,255,0.05);border:1.5px solid var(--border);border-radius:12px;padding:1rem;cursor:pointer;text-align:center;transition:all 0.2s;}
+.pay-method:hover,.pay-method.selected{border-color:var(--gold);background:rgba(201,168,76,0.1);}
+.pay-method-logo{font-size:1.5rem;margin-bottom:0.4rem;}
+.pay-method-name{font-size:0.8rem;font-weight:600;}
+
+/* ===== GOOGLE MAP ===== */
+.map-placeholder{background:rgba(0,0,0,0.4);border:1px solid var(--border);border-radius:12px;height:300px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;color:var(--muted);position:relative;overflow:hidden;}
+.map-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(201,168,76,0.05) 1px,transparent 1px),linear-gradient(90deg,rgba(201,168,76,0.05) 1px,transparent 1px);background-size:40px 40px;}
+.map-pin{font-size:3rem;color:var(--gold);position:relative;z-index:1;animation:pinBounce 2s ease-in-out infinite;}
+@keyframes pinBounce{0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);};}
+
+/* ===== QR CODE ===== */
+.qr-container{background:white;border-radius:12px;padding:1rem;display:inline-block;}
+.qr-grid{display:grid;grid-template-columns:repeat(11,1fr);gap:2px;}
+.qr-cell{width:100%;aspect-ratio:1;border-radius:1px;}
+
+/* ===== FORM STYLES ===== */
+.form-section{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:16px;padding:1.5rem;margin-bottom:1.5rem;}
+.form-title{font-family:'Playfair Display',serif;font-size:1.1rem;margin-bottom:1.2rem;color:var(--gold);}
+.input-group{margin-bottom:1rem;}
+.input-label{display:block;font-size:0.78rem;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:0.4rem;}
+.text-input,.select-input,.textarea-input{width:100%;background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:10px;padding:0.75rem 1rem;color:var(--white);font-family:'DM Sans',sans-serif;font-size:0.9rem;transition:border-color 0.2s;}
+.text-input:focus,.select-input:focus,.textarea-input:focus{outline:none;border-color:var(--gold);}
+.select-input option{background:#0B1C3D;}
+.textarea-input{resize:vertical;min-height:100px;}
+.btn-action{display:inline-flex;align-items:center;gap:0.5rem;padding:0.7rem 1.5rem;border-radius:10px;border:none;cursor:pointer;font-size:0.85rem;font-weight:600;font-family:'DM Sans',sans-serif;transition:all 0.2s;}
+.btn-gold{background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:#000;}
+.btn-gold:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(201,168,76,0.3);}
+.btn-red{background:rgba(192,57,43,0.2);color:#e74c3c;border:1px solid rgba(192,57,43,0.3);}
+.btn-red:hover{background:rgba(192,57,43,0.4);}
+.btn-blue{background:rgba(52,152,219,0.2);color:#3498db;border:1px solid rgba(52,152,219,0.3);}
+.btn-green{background:rgba(26,143,92,0.2);color:#27ae60;border:1px solid rgba(26,143,92,0.3);}
+
+/* ===== TICKET TYPES ===== */
+.ticket-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;}
+.ticket-card{border-radius:16px;padding:1.5rem;position:relative;overflow:hidden;}
+.ticket-vip{background:linear-gradient(135deg,rgba(155,89,182,0.2),rgba(90,30,140,0.3));border:1px solid rgba(155,89,182,0.5);}
+.ticket-regular{background:linear-gradient(135deg,rgba(52,152,219,0.15),rgba(21,67,120,0.3));border:1px solid rgba(52,152,219,0.4);}
+.ticket-type{font-size:0.75rem;letter-spacing:0.2em;font-weight:700;margin-bottom:0.5rem;}
+.ticket-price{font-family:'Playfair Display',serif;font-size:2.5rem;font-weight:700;}
+.ticket-features{margin-top:0.8rem;font-size:0.8rem;color:rgba(255,255,255,0.7);line-height:1.8;}
+
+/* ===== SNACK GALLERY ===== */
+.snack-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:1rem;}
+.snack-card{background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:12px;padding:1rem;text-align:center;transition:all 0.3s;}
+.snack-card:hover{transform:translateY(-4px);border-color:var(--gold);}
+.snack-emoji{font-size:2.5rem;margin-bottom:0.5rem;}
+.snack-name{font-size:0.85rem;font-weight:600;}
+.snack-note{font-size:0.72rem;color:var(--muted);}
+
+/* ===== BUS GALLERY ===== */
+.bus-gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem;}
+.bus-img-card{background:rgba(0,0,0,0.4);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:all 0.3s;}
+.bus-img-card:hover{transform:translateY(-4px);border-color:var(--gold);}
+.bus-img-placeholder{height:120px;display:flex;align-items:center;justify-content:center;font-size:3rem;background:linear-gradient(135deg,rgba(201,168,76,0.05),rgba(30,53,96,0.5));}
+.bus-img-info{padding:0.8rem;}
+.bus-reg{font-size:0.9rem;font-weight:600;}
+.bus-status{font-size:0.75rem;color:var(--green);}
+
+/* ===== SMS SIMULATION ===== */
+.sms-popup{position:fixed;top:2rem;right:2rem;background:linear-gradient(135deg,var(--navy-mid),var(--navy-light));border:1px solid var(--green);border-radius:16px;padding:1.2rem 1.5rem;z-index:200;min-width:280px;animation:slideInRight 0.5s,fadeOut 0.5s 4.5s forwards;box-shadow:0 20px 40px rgba(0,0,0,0.5);}
+@keyframes slideInRight{from{transform:translateX(150px);opacity:0;}to{transform:translateX(0);opacity:1;};}
+@keyframes fadeOut{to{opacity:0;transform:translateX(150px);};}
+.sms-header{display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;color:var(--green);}
+.sms-text{font-size:0.85rem;line-height:1.6;color:rgba(255,255,255,0.8);}
+
+/* ===== COLOR SWITCH ===== */
+.color-switcher{position:fixed;bottom:2rem;right:2rem;z-index:90;}
+.color-dot{width:16px;height:16px;border-radius:50%;cursor:pointer;border:2px solid rgba(255,255,255,0.3);transition:transform 0.2s;}
+.color-dot:hover{transform:scale(1.3);}
+
+/* ===== POPUP ANIMATIONS ===== */
+.popup-success{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);background:linear-gradient(135deg,var(--navy-mid),var(--navy-light));border:1px solid var(--green);border-radius:20px;padding:2rem;text-align:center;z-index:200;min-width:300px;transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1);}
+.popup-success.show{transform:translate(-50%,-50%) scale(1);}
+.popup-overlay{display:none;position:fixed;inset:0;z-index:199;background:rgba(0,0,0,0.5);}
+.popup-overlay.show{display:block;}
+
+/* ===== CHAT / DIRECT MESSAGE ===== */
+.chat-box{background:rgba(0,0,0,0.4);border:1px solid var(--border);border-radius:12px;height:300px;overflow-y:auto;padding:1rem;margin-bottom:1rem;display:flex;flex-direction:column;gap:0.8rem;}
+.msg-bubble{max-width:70%;padding:0.7rem 1rem;border-radius:12px;font-size:0.85rem;line-height:1.5;}
+.msg-admin{background:rgba(201,168,76,0.15);border:1px solid rgba(201,168,76,0.3);align-self:flex-end;border-bottom-right-radius:4px;}
+.msg-user{background:rgba(52,152,219,0.1);border:1px solid rgba(52,152,219,0.3);align-self:flex-start;border-bottom-left-radius:4px;}
+.msg-time{font-size:0.65rem;color:var(--muted);margin-top:0.2rem;}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:768px){
+  .app-layout{grid-template-columns:1fr;}
+  .sidebar{transform:translateX(-100%);}
+  .sidebar.open{transform:translateX(0);}
+  .main-content{margin-left:0;}
+  .stats-grid{grid-template-columns:1fr 1fr;}
+  .ticket-grid{grid-template-columns:1fr;}
+  .seat-grid{gap:4px;}
+  .seat{width:30px;height:30px;font-size:0.55rem;}
+}
+
+/* ===== AUTO COLOR THEMES ===== */
+body.theme-emerald{--gold:#2ecc71;--gold-light:#55d98d;--gold-dark:#1a8f50;--border:rgba(46,204,113,0.25);}
+body.theme-sapphire{--gold:#3498db;--gold-light:#5dade2;--gold-dark:#1f618d;--border:rgba(52,152,219,0.25);}
+body.theme-ruby{--gold:#e74c3c;--gold-light:#ec6f64;--gold-dark:#a93226;--border:rgba(231,76,60,0.25);}
+body.theme-gold{--gold:#C9A84C;--gold-light:#E8C97A;--gold-dark:#9A7830;--border:rgba(201,168,76,0.25);}
+
+/* ===== DECORATIVE DIVIDER ===== */
+.gold-divider{height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:1.5rem 0;opacity:0.4;}
+
+/* ===== PROFILE ===== */
+.profile-avatar-lg{width:90px;height:90px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-dark));display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:700;color:#000;margin:0 auto 1rem;border:3px solid var(--gold);}
+
+/* ===== BOARDING/DROP POINT ===== */
+.route-visual{display:flex;align-items:center;gap:0.5rem;padding:1rem;background:rgba(0,0,0,0.3);border-radius:12px;}
+.route-dot{width:14px;height:14px;border-radius:50%;background:var(--gold);flex-shrink:0;}
+.route-line{flex:1;height:2px;background:linear-gradient(90deg,var(--gold),rgba(255,255,255,0.2));}
+.route-dot-end{width:14px;height:14px;border-radius:50%;background:rgba(231,76,60,0.8);border:2px solid #e74c3c;flex-shrink:0;}
+
+/* ===== NOTIFICATION DOT ===== */
+.notif-dot{width:8px;height:8px;background:#e74c3c;border-radius:50%;display:inline-block;margin-left:0.3rem;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.5;transform:scale(0.7);};}
+
+/* ===== LOADING ===== */
+.spinner{width:24px;height:24px;border:3px solid rgba(201,168,76,0.2);border-top-color:var(--gold);border-radius:50%;animation:spin 0.7s linear infinite;display:inline-block;}
+@keyframes spin{to{transform:rotate(360deg)};}
+
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;}
+@media(max-width:900px){.two-col{grid-template-columns:1fr;}}
+.progress-bar{height:6px;background:rgba(255,255,255,0.1);border-radius:50px;overflow:hidden;margin-top:0.4rem;}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-light));border-radius:50px;transition:width 1s ease;}
+</style>
+</head>
+<body>
+<div class="bg-anim"><div class="orb orb1"></div><div class="orb orb2"></div><div class="orb orb3"></div></div>
+
+<!-- ============ LANDING ============ -->
+<div id="landing">
+  <div class="logo-badge"><i class="fas fa-bus"></i><span>CHRSS.G COMPANY</span></div>
+  <h1 class="landing-title">Journey<br>in Style</h1>
+  <p class="landing-sub">Premium Bus Travel</p>
+  <p class="landing-desc">Experience luxury intercity travel with Chrss.G Company — Tanzania's premier bus service with VIP seating, in-journey snacks, and seamless digital booking.</p>
+  <div class="btn-group">
+    <button class="btn-primary" onclick="openLogin()"><i class="fas fa-sign-in-alt"></i> &nbsp;Book Now</button>
+    <button class="btn-outline" onclick="openRegister()"><i class="fas fa-user-plus"></i> &nbsp;Register</button>
+  </div>
+  <div class="landing-stats">
+    <div class="stat"><div class="stat-num">48</div><div class="stat-label">Seats Per Bus</div></div>
+    <div class="stat"><div class="stat-num">12+</div><div class="stat-label">Active Routes</div></div>
+    <div class="stat"><div class="stat-num">5K+</div><div class="stat-label">Happy Passengers</div></div>
+    <div class="stat"><div class="stat-num">4.9★</div><div class="stat-label">Service Rating</div></div>
+  </div>
+  <div class="scroll-indicator"><i class="fas fa-chevron-down" style="color:var(--gold);opacity:0.5;"></i></div>
+</div>
+
+<!-- ============ LOGIN MODAL ============ -->
+<div class="modal-overlay" id="loginModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeAllModals()"><i class="fas fa-times"></i></button>
+    <h2 class="modal-title">Welcome Back</h2>
+    <p class="modal-sub">Sign in to your Chrss.G account</p>
+    <div class="role-tabs">
+      <button class="role-tab active" onclick="setRole('user',this)"><i class="fas fa-user"></i> Passenger</button>
+      <button class="role-tab" onclick="setRole('admin',this)"><i class="fas fa-shield-alt"></i> Admin</button>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Email or Phone</label>
+      <input type="text" class="form-input" id="loginEmail" placeholder="Enter email or phone">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Password</label>
+      <input type="password" class="form-input" id="loginPass" placeholder="Enter password">
+    </div>
+    <button class="btn-primary" style="width:100%;justify-content:center;display:flex;gap:0.5rem;" onclick="doLogin()">
+      <i class="fas fa-sign-in-alt"></i> Sign In
+    </button>
+    <div class="auth-switch">Don't have an account? <a onclick="switchToRegister()">Register here</a></div>
+  </div>
+</div>
+
+<!-- ============ REGISTER MODAL ============ -->
+<div class="modal-overlay" id="registerModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeAllModals()"><i class="fas fa-times"></i></button>
+    <h2 class="modal-title">Join Chrss.G</h2>
+    <p class="modal-sub">Create your passenger account</p>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">First Name</label>
+        <input type="text" class="form-input" id="regFirst" placeholder="First name">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Last Name</label>
+        <input type="text" class="form-input" id="regLast" placeholder="Last name">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Email</label>
+      <input type="email" class="form-input" id="regEmail" placeholder="your@email.com">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Phone Number</label>
+      <input type="text" class="form-input" id="regPhone" placeholder="+255 7XX XXX XXX">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Password</label>
+      <input type="password" class="form-input" id="regPass" placeholder="Create password">
+    </div>
+    <button class="btn-primary" style="width:100%;justify-content:center;display:flex;gap:0.5rem;" onclick="doRegister()">
+      <i class="fas fa-user-plus"></i> Create Account
+    </button>
+    <div class="auth-switch">Already have an account? <a onclick="switchToLogin()">Sign in</a></div>
+  </div>
+</div>
+
+<!-- ============ APP SHELL ============ -->
+<div id="app">
+  <div class="app-layout">
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo"><i class="fas fa-bus-alt"></i>Chrss.G</div>
+        <div class="sidebar-tagline">Premium Bus Booking System</div>
+      </div>
+      <div class="sidebar-user">
+        <div class="user-avatar" id="sidebarAvatar">U</div>
+        <div>
+          <div class="user-info-name" id="sidebarName">User</div>
+          <div class="user-info-role" id="sidebarRole">Passenger</div>
+        </div>
+      </div>
+      <nav class="sidebar-nav" id="sidebarNav"></nav>
+      <div class="sidebar-footer">
+        <button class="logout-btn" onclick="doLogout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <div class="main-content">
+      <div class="topbar">
+        <div class="topbar-title" id="topbarTitle">Dashboard</div>
+        <div class="topbar-right">
+          <div class="topbar-badge" id="topbarBadge">USER</div>
+          <div style="font-size:0.85rem;color:var(--muted);" id="topbarDate"></div>
+        </div>
+      </div>
+
+      <!-- ======== ADMIN PAGES ======== -->
+
+      <!-- ADMIN DASHBOARD -->
+      <div class="page" id="page-admin-dashboard">
+        <div class="stats-grid">
+          <div class="stat-card"><div class="stat-icon gold"><i class="fas fa-dollar-sign"></i></div><div class="stat-card-num">TZS 4.2M</div><div class="stat-card-label">Total Revenue</div><div class="stat-card-change">↑ 12% this month</div></div>
+          <div class="stat-card"><div class="stat-icon blue"><i class="fas fa-users"></i></div><div class="stat-card-num">1,284</div><div class="stat-card-label">Total Users</div><div class="stat-card-change">↑ 8% this month</div></div>
+          <div class="stat-card"><div class="stat-icon green"><i class="fas fa-ticket-alt"></i></div><div class="stat-card-num">3,891</div><div class="stat-card-label">Tickets Sold</div><div class="stat-card-change">↑ 15% this month</div></div>
+          <div class="stat-card"><div class="stat-icon red"><i class="fas fa-bus"></i></div><div class="stat-card-num">8</div><div class="stat-card-label">Active Buses</div><div class="stat-card-change">100% operational</div></div>
+        </div>
+        <div class="two-col">
+          <div class="chart-container">
+            <div class="section-header"><span class="section-title">Revenue Trend</span><span class="section-badge">2024</span></div>
+            <div class="chart-area">
+              <svg class="chart" viewBox="0 0 500 180" preserveAspectRatio="none">
+                <defs><linearGradient id="revGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgba(201,168,76,0.4)"/><stop offset="100%" stop-color="rgba(201,168,76,0)"/></linearGradient></defs>
+                <!-- Grid lines -->
+                <line x1="0" y1="45" x2="500" y2="45" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+                <line x1="0" y1="90" x2="500" y2="90" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+                <line x1="0" y1="135" x2="500" y2="135" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+                <!-- Revenue fill -->
+                <path d="M0,140 L55,120 L110,100 L165,110 L220,80 L275,60 L330,70 L385,40 L440,30 L500,20 L500,180 L0,180Z" fill="url(#revGrad)"/>
+                <!-- Revenue line -->
+                <path d="M0,140 L55,120 L110,100 L165,110 L220,80 L275,60 L330,70 L385,40 L440,30 L500,20" fill="none" stroke="var(--gold)" stroke-width="2.5" stroke-linecap="round"/>
+                <!-- Data points -->
+                <circle cx="0" cy="140" r="4" fill="var(--gold)"/>
+                <circle cx="55" cy="120" r="4" fill="var(--gold)"/>
+                <circle cx="110" cy="100" r="4" fill="var(--gold)"/>
+                <circle cx="165" cy="110" r="4" fill="var(--gold)"/>
+                <circle cx="220" cy="80" r="4" fill="var(--gold)"/>
+                <circle cx="275" cy="60" r="4" fill="var(--gold)"/>
+                <circle cx="330" cy="70" r="4" fill="var(--gold)"/>
+                <circle cx="385" cy="40" r="4" fill="var(--gold)"/>
+                <circle cx="440" cy="30" r="4" fill="var(--gold)"/>
+                <circle cx="500" cy="20" r="4" fill="var(--gold)"/>
+                <!-- Month labels -->
+                <text x="0" y="175" fill="rgba(255,255,255,0.3)" font-size="10">Jan</text>
+                <text x="55" y="175" fill="rgba(255,255,255,0.3)" font-size="10">Feb</text>
+                <text x="110" y="175" fill="rgba(255,255,255,0.3)" font-size="10">Mar</text>
+                <text x="165" y="175" fill="rgba(255,255,255,0.3)" font-size="10">Apr</text>
+                <text x="220" y="175" fill="rgba(255,255,255,0.3)" font-size="10">May</text>
+                <text x="275" y="175" fill="rgba(255,255,255,0.3)" font-size="10">Jun</text>
+                <text x="330" y="175" fill="rgba(255,255,255,0.3)" font-size="10">Jul</text>
+                <text x="385" y="175" fill="rgba(255,255,255,0.3)" font-size="10">Aug</text>
+                <text x="440" y="175" fill="rgba(255,255,255,0.3)" font-size="10">Sep</text>
+                <text x="480" y="175" fill="rgba(255,255,255,0.3)" font-size="10">Oct</text>
+              </svg>
+            </div>
+          </div>
+          <div class="chart-container">
+            <div class="section-header"><span class="section-title">Booking by Route</span><span class="section-badge">Live</span></div>
+            <div style="display:flex;flex-direction:column;gap:0.8rem;margin-top:1rem;">
+              <div><div style="display:flex;justify-content:space-between;font-size:0.85rem;margin-bottom:0.3rem;"><span>DSM → Arusha</span><span style="color:var(--gold);">38%</span></div><div class="progress-bar"><div class="progress-fill" style="width:38%;"></div></div></div>
+              <div><div style="display:flex;justify-content:space-between;font-size:0.85rem;margin-bottom:0.3rem;"><span>DSM → Mwanza</span><span style="color:var(--gold);">27%</span></div><div class="progress-bar"><div class="progress-fill" style="width:27%;"></div></div></div>
+              <div><div style="display:flex;justify-content:space-between;font-size:0.85rem;margin-bottom:0.3rem;"><span>DSM → Dodoma</span><span style="color:var(--gold);">20%</span></div><div class="progress-bar"><div class="progress-fill" style="width:20%;"></div></div></div>
+              <div><div style="display:flex;justify-content:space-between;font-size:0.85rem;margin-bottom:0.3rem;"><span>Arusha → Moshi</span><span style="color:var(--gold);">15%</span></div><div class="progress-bar"><div class="progress-fill" style="width:15%;"></div></div></div>
+            </div>
+          </div>
+        </div>
+        <!-- Recent Bookings -->
+        <div class="card">
+          <div class="card-header"><i class="fas fa-list" style="color:var(--gold);"></i><span class="card-title">Recent Bookings</span></div>
+          <div style="overflow-x:auto;">
+            <table class="data-table">
+              <thead><tr><th>Ticket ID</th><th>Passenger</th><th>Route</th><th>Seat</th><th>Type</th><th>Amount</th><th>Status</th></tr></thead>
+              <tbody id="recentBookingsTable">
+                <tr><td><span style="font-family:'JetBrains Mono';color:var(--gold);font-size:0.8rem;">#TKT-0041</span></td><td>Amina Juma</td><td>DSM → Arusha</td><td>12A</td><td><span class="badge badge-gold">VIP</span></td><td>TZS 45,000</td><td><span class="badge badge-green">✓ Confirmed</span></td></tr>
+                <tr><td><span style="font-family:'JetBrains Mono';color:var(--gold);font-size:0.8rem;">#TKT-0040</span></td><td>James Mwangi</td><td>DSM → Mwanza</td><td>7B</td><td><span class="badge badge-blue">Regular</span></td><td>TZS 28,000</td><td><span class="badge badge-green">✓ Confirmed</span></td></tr>
+                <tr><td><span style="font-family:'JetBrains Mono';color:var(--gold);font-size:0.8rem;">#TKT-0039</span></td><td>Fatuma Hassan</td><td>Arusha → Moshi</td><td>3A</td><td><span class="badge badge-gold">VIP</span></td><td>TZS 45,000</td><td><span class="badge badge-green">✓ Confirmed</span></td></tr>
+                <tr><td><span style="font-family:'JetBrains Mono';color:var(--gold);font-size:0.8rem;">#TKT-0038</span></td><td>Peter Kimani</td><td>DSM → Dodoma</td><td>21C</td><td><span class="badge badge-blue">Regular</span></td><td>TZS 22,000</td><td><span class="badge badge-red">Pending</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ADMIN: MANAGE ROUTES -->
+      <div class="page" id="page-admin-routes">
+        <div class="section-header"><span class="section-title">Manage Routes</span><button class="btn-action btn-gold" onclick="showAddRouteForm()"><i class="fas fa-plus"></i> Add Route</button></div>
+        <div class="form-section" id="addRouteForm" style="display:none;">
+          <div class="form-title"><i class="fas fa-route"></i> Add New Route</div>
+          <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;">
+            <div class="input-group"><label class="input-label">From (Origin)</label><input class="text-input" placeholder="e.g. Dar es Salaam"></div>
+            <div class="input-group"><label class="input-label">To (Destination)</label><input class="text-input" placeholder="e.g. Arusha"></div>
+            <div class="input-group"><label class="input-label">Duration (hrs)</label><input class="text-input" type="number" placeholder="8"></div>
+          </div>
+          <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;">
+            <div class="input-group"><label class="input-label">VIP Price (TZS)</label><input class="text-input" type="number" placeholder="45000"></div>
+            <div class="input-group"><label class="input-label">Regular Price (TZS)</label><input class="text-input" type="number" placeholder="28000"></div>
+            <div class="input-group"><label class="input-label">Departure Time</label><input class="text-input" type="time" value="06:00"></div>
+          </div>
+          <div style="display:flex;gap:0.8rem;margin-top:0.5rem;">
+            <button class="btn-action btn-gold" onclick="saveRoute()"><i class="fas fa-save"></i> Save Route</button>
+            <button class="btn-action btn-red" onclick="document.getElementById('addRouteForm').style.display='none'"><i class="fas fa-times"></i> Cancel</button>
+          </div>
+        </div>
+        <div class="card">
+          <div style="overflow-x:auto;">
+            <table class="data-table">
+              <thead><tr><th>Route</th><th>Distance</th><th>Duration</th><th>Departure</th><th>VIP Price</th><th>Regular Price</th><th>Status</th><th>Actions</th></tr></thead>
+              <tbody>
+                <tr><td>DSM → Arusha</td><td>630 km</td><td>8 hrs</td><td>06:00 AM</td><td>TZS 45,000</td><td>TZS 28,000</td><td><span class="badge badge-green">Active</span></td><td><button class="btn-action btn-blue" style="padding:0.4rem 0.8rem;font-size:0.78rem;"><i class="fas fa-edit"></i></button> <button class="btn-action btn-red" style="padding:0.4rem 0.8rem;font-size:0.78rem;"><i class="fas fa-trash"></i></button></td></tr>
+                <tr><td>DSM → Mwanza</td><td>1,150 km</td><td>14 hrs</td><td>08:00 AM</td><td>TZS 55,000</td><td>TZS 38,000</td><td><span class="badge badge-green">Active</span></td><td><button class="btn-action btn-blue" style="padding:0.4rem 0.8rem;font-size:0.78rem;"><i class="fas fa-edit"></i></button> <button class="btn-action btn-red" style="padding:0.4rem 0.8rem;font-size:0.78rem;"><i class="fas fa-trash"></i></button></td></tr>
+                <tr><td>DSM → Dodoma</td><td>454 km</td><td>6 hrs</td><td>07:00 AM</td><td>TZS 32,000</td><td>TZS 22,000</td><td><span class="badge badge-green">Active</span></td><td><button class="btn-action btn-blue" style="padding:0.4rem 0.8rem;font-size:0.78rem;"><i class="fas fa-edit"></i></button> <button class="btn-action btn-red" style="padding:0.4rem 0.8rem;font-size:0.78rem;"><i class="fas fa-trash"></i></button></td></tr>
+                <tr><td>Arusha → Moshi</td><td>80 km</td><td>1.5 hrs</td><td>09:00 AM</td><td>TZS 18,000</td><td>TZS 12,000</td><td><span class="badge badge-red">Paused</span></td><td><button class="btn-action btn-blue" style="padding:0.4rem 0.8rem;font-size:0.78rem;"><i class="fas fa-edit"></i></button> <button class="btn-action btn-red" style="padding:0.4rem 0.8rem;font-size:0.78rem;"><i class="fas fa-trash"></i></button></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ADMIN: TICKET PRICING -->
+      <div class="page" id="page-admin-tickets">
+        <div class="section-header"><span class="section-title">Ticket Pricing</span></div>
+        <div class="ticket-grid">
+          <div class="ticket-card ticket-vip">
+            <div class="ticket-type" style="color:#b39ddb;">👑 VIP CLASS</div>
+            <div class="ticket-price">TZS 45,000</div>
+            <div class="ticket-features">
+              ✦ Priority front seats<br>
+              ✦ In-journey snacks & drinks<br>
+              ✦ Extra legroom<br>
+              ✦ USB charging port<br>
+              ✦ Blanket & pillow<br>
+              ✦ WiFi access
+            </div>
+            <div style="margin-top:1rem;"><button class="btn-action btn-gold" onclick="editTicketPrice('VIP')"><i class="fas fa-edit"></i> Edit Price</button></div>
+          </div>
+          <div class="ticket-card ticket-regular">
+            <div class="ticket-type" style="color:#90caf9;">🎫 REGULAR CLASS</div>
+            <div class="ticket-price">TZS 28,000</div>
+            <div class="ticket-features">
+              ✦ Standard comfortable seats<br>
+              ✦ Light refreshments<br>
+              ✦ Air conditioning<br>
+              ✦ Standard legroom<br>
+              ✦ Safety guaranteed<br>
+              ✦ On-time service
+            </div>
+            <div style="margin-top:1rem;"><button class="btn-action btn-blue" onclick="editTicketPrice('Regular')"><i class="fas fa-edit"></i> Edit Price</button></div>
+          </div>
+        </div>
+        <div class="gold-divider"></div>
+        <div class="form-section">
+          <div class="form-title"><i class="fas fa-tag"></i> Update Ticket Price</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;">
+            <div class="input-group"><label class="input-label">Ticket Class</label><select class="select-input"><option>VIP</option><option>Regular</option></select></div>
+            <div class="input-group"><label class="input-label">Route</label><select class="select-input"><option>All Routes</option><option>DSM → Arusha</option><option>DSM → Mwanza</option></select></div>
+            <div class="input-group"><label class="input-label">New Price (TZS)</label><input class="text-input" type="number" placeholder="45000"></div>
+          </div>
+          <button class="btn-action btn-gold"><i class="fas fa-save"></i> Update Pricing</button>
+        </div>
+      </div>
+
+      <!-- ADMIN: BUS MANAGEMENT -->
+      <div class="page" id="page-admin-buses">
+        <div class="section-header"><span class="section-title">Bus Fleet</span><button class="btn-action btn-gold" onclick="showAddBusForm()"><i class="fas fa-plus"></i> Register Bus</button></div>
+        <div class="form-section" id="addBusForm" style="display:none;">
+          <div class="form-title"><i class="fas fa-bus"></i> Register New Bus</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;">
+            <div class="input-group"><label class="input-label">Registration No.</label><input class="text-input" placeholder="T 123 AAA"></div>
+            <div class="input-group"><label class="input-label">Bus Model</label><input class="text-input" placeholder="e.g. Scania Irizar"></div>
+            <div class="input-group"><label class="input-label">Year</label><input class="text-input" type="number" placeholder="2023"></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+            <div class="input-group"><label class="input-label">Capacity (seats)</label><input class="text-input" type="number" value="48"></div>
+            <div class="input-group"><label class="input-label">Driver Name</label><input class="text-input" placeholder="Driver full name"></div>
+          </div>
+          <div class="input-group"><label class="input-label">Bus Photo (URL)</label><input class="text-input" placeholder="https://..."></div>
+          <div style="display:flex;gap:0.8rem;"><button class="btn-action btn-gold" onclick="saveBus()"><i class="fas fa-save"></i> Register</button><button class="btn-action btn-red" onclick="document.getElementById('addBusForm').style.display='none'">Cancel</button></div>
+        </div>
+        <div class="bus-gallery" id="busGallery">
+          <div class="bus-img-card"><div class="bus-img-placeholder">🚌</div><div class="bus-img-info"><div class="bus-reg">T 456 DAR</div><div class="bus-status">● Active — Scania 2022</div><div style="font-size:0.72rem;color:var(--muted);margin-top:0.2rem;">Route: DSM → Arusha</div></div></div>
+          <div class="bus-img-card"><div class="bus-img-placeholder">🚌</div><div class="bus-img-info"><div class="bus-reg">T 789 ARU</div><div class="bus-status">● Active — Yutong 2023</div><div style="font-size:0.72rem;color:var(--muted);margin-top:0.2rem;">Route: DSM → Mwanza</div></div></div>
+          <div class="bus-img-card"><div class="bus-img-placeholder">🚌</div><div class="bus-img-info"><div class="bus-reg">T 012 MWZ</div><div class="bus-status" style="color:orange;">● Maintenance</div><div style="font-size:0.72rem;color:var(--muted);margin-top:0.2rem;">Garage: Mwanza Depot</div></div></div>
+        </div>
+      </div>
+
+      <!-- ADMIN: SNACKS -->
+      <div class="page" id="page-admin-snacks">
+        <div class="section-header"><span class="section-title">In-Journey Snacks</span><button class="btn-action btn-gold" onclick="addSnack()"><i class="fas fa-plus"></i> Add Snack</button></div>
+        <div class="snack-grid" id="snackGrid">
+          <div class="snack-card"><div class="snack-emoji">🥤</div><div class="snack-name">Mineral Water</div><div class="snack-note">500ml — All classes</div></div>
+          <div class="snack-card"><div class="snack-emoji">🧃</div><div class="snack-name">Juice Box</div><div class="snack-note">Mango/Orange — VIP</div></div>
+          <div class="snack-card"><div class="snack-emoji">🍫</div><div class="snack-name">Chocolate Bar</div><div class="snack-note">Biscoff/Kit-Kat — VIP</div></div>
+          <div class="snack-card"><div class="snack-emoji">🥪</div><div class="snack-name">Sandwich</div><div class="snack-note">Chicken/Veg — VIP</div></div>
+          <div class="snack-card"><div class="snack-emoji">🍌</div><div class="snack-name">Fresh Fruit</div><div class="snack-note">Seasonal — VIP</div></div>
+          <div class="snack-card"><div class="snack-emoji">🍪</div><div class="snack-name">Biscuits Pack</div><div class="snack-note">Marie/Digestive — Regular</div></div>
+          <div class="snack-card"><div class="snack-emoji">☕</div><div class="snack-name">Tea/Coffee</div><div class="snack-note">Hot beverages — VIP</div></div>
+          <div class="snack-card" style="border-style:dashed;cursor:pointer;" onclick="addSnack()"><div class="snack-emoji">➕</div><div class="snack-name" style="color:var(--muted);">Add New</div></div>
+        </div>
+      </div>
+
+      <!-- ADMIN: SETTINGS -->
+      <div class="page" id="page-admin-settings">
+        <div class="section-header"><span class="section-title">Settings</span></div>
+        <div class="two-col">
+          <div class="form-section">
+            <div class="form-title"><i class="fas fa-user-cog"></i> Admin Account</div>
+            <div class="input-group"><label class="input-label">Username</label><input class="text-input" value="admin" id="adminUsername"></div>
+            <div class="input-group"><label class="input-label">Email</label><input class="text-input" value="admin@chrssg.co.tz" id="adminEmail"></div>
+            <div class="input-group"><label class="input-label">New Password</label><input class="text-input" type="password" placeholder="Leave blank to keep current"></div>
+            <div class="input-group"><label class="input-label">Confirm Password</label><input class="text-input" type="password" placeholder="Confirm new password"></div>
+            <button class="btn-action btn-gold" onclick="saveSettings()"><i class="fas fa-save"></i> Save Changes</button>
+          </div>
+          <div class="form-section">
+            <div class="form-title"><i class="fas fa-address-book"></i> Contact Information</div>
+            <div class="input-group"><label class="input-label">Support Phone</label><input class="text-input" value="+255 712 345 678"></div>
+            <div class="input-group"><label class="input-label">Support Email</label><input class="text-input" value="support@chrssg.co.tz"></div>
+            <div class="input-group"><label class="input-label">WhatsApp</label><input class="text-input" value="+255 712 345 678"></div>
+            <div class="input-group"><label class="input-label">Office Address</label><textarea class="textarea-input" rows="2">Posta Road, Dar es Salaam, Tanzania</textarea></div>
+            <button class="btn-action btn-gold"><i class="fas fa-save"></i> Update Contact</button>
+          </div>
+        </div>
+        <!-- User Management -->
+        <div class="form-section">
+          <div class="form-title"><i class="fas fa-users"></i> User Management</div>
+          <div style="overflow-x:auto;">
+            <table class="data-table">
+              <thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Joined</th><th>Bookings</th><th>Actions</th></tr></thead>
+              <tbody id="userTable">
+                <tr><td>Amina Juma</td><td>amina@gmail.com</td><td>+255 712 111 222</td><td>Jan 12, 2024</td><td>5</td><td><button class="btn-action btn-blue" style="padding:0.3rem 0.7rem;font-size:0.75rem;" onclick="viewUserDetails('Amina Juma')"><i class="fas fa-eye"></i></button> <button class="btn-action btn-red" style="padding:0.3rem 0.7rem;font-size:0.75rem;" onclick="deleteUser(this)"><i class="fas fa-trash"></i></button></td></tr>
+                <tr><td>James Mwangi</td><td>james@email.com</td><td>+255 754 222 333</td><td>Feb 3, 2024</td><td>2</td><td><button class="btn-action btn-blue" style="padding:0.3rem 0.7rem;font-size:0.75rem;" onclick="viewUserDetails('James Mwangi')"><i class="fas fa-eye"></i></button> <button class="btn-action btn-red" style="padding:0.3rem 0.7rem;font-size:0.75rem;" onclick="deleteUser(this)"><i class="fas fa-trash"></i></button></td></tr>
+                <tr><td>Fatuma Hassan</td><td>fatuma@mail.com</td><td>+255 769 333 444</td><td>Mar 7, 2024</td><td>8</td><td><button class="btn-action btn-blue" style="padding:0.3rem 0.7rem;font-size:0.75rem;" onclick="viewUserDetails('Fatuma Hassan')"><i class="fas fa-eye"></i></button> <button class="btn-action btn-red" style="padding:0.3rem 0.7rem;font-size:0.75rem;" onclick="deleteUser(this)"><i class="fas fa-trash"></i></button></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ADMIN: DIRECT CHAT -->
+      <div class="page" id="page-admin-messages">
+        <div class="section-header"><span class="section-title">Direct Messages</span></div>
+        <div class="two-col">
+          <div class="form-section">
+            <div class="form-title"><i class="fas fa-paper-plane"></i> Send Message to User</div>
+            <div class="input-group"><label class="input-label">Phone Number</label><input class="text-input" id="msgPhone" placeholder="+255 7XX XXX XXX"></div>
+            <div class="input-group"><label class="input-label">Email</label><input class="text-input" id="msgEmail" placeholder="user@email.com"></div>
+            <div class="input-group"><label class="input-label">Message</label><textarea class="textarea-input" id="msgText" placeholder="Type your message..."></textarea></div>
+            <div style="display:flex;gap:0.8rem;">
+              <button class="btn-action btn-gold" onclick="sendAdminMsg()"><i class="fas fa-sms"></i> Send SMS</button>
+              <button class="btn-action btn-blue" onclick="sendAdminMsg()"><i class="fas fa-envelope"></i> Send Email</button>
+            </div>
+          </div>
+          <div>
+            <div class="form-title" style="margin-bottom:1rem;"><i class="fas fa-comments"></i> Message Thread</div>
+            <div class="chat-box" id="adminChatBox">
+              <div><div class="msg-bubble msg-user">Hello, my ticket shows pending but payment was made.</div><div class="msg-time" style="padding-left:0.5rem;">Amina Juma — 10:32 AM</div></div>
+              <div style="align-self:flex-end;text-align:right;"><div class="msg-bubble msg-admin">Hi Amina! We've confirmed your payment. Ticket #TKT-0041 is now active.</div><div class="msg-time" style="padding-right:0.5rem;">Admin — 10:35 AM</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ADMIN: OFFICE LOCATION -->
+      <div class="page" id="page-admin-location">
+        <div class="section-header"><span class="section-title">Booking Office Location</span></div>
+        <div class="form-section">
+          <div class="form-title"><i class="fas fa-map-marker-alt"></i> Add/Update Office Location</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+            <div class="input-group"><label class="input-label">Office Name</label><input class="text-input" value="Chrss.G Main Office — Dar es Salaam"></div>
+            <div class="input-group"><label class="input-label">Address</label><input class="text-input" value="Posta Road, Kariakoo, DSM"></div>
+            <div class="input-group"><label class="input-label">Latitude</label><input class="text-input" value="-6.8235"></div>
+            <div class="input-group"><label class="input-label">Longitude</label><input class="text-input" value="39.2695"></div>
+          </div>
+          <div class="input-group"><label class="input-label">Google Maps Embed URL</label><input class="text-input" placeholder="https://maps.google.com/..."></div>
+          <button class="btn-action btn-gold"><i class="fas fa-save"></i> Save Location</button>
+        </div>
+        <div class="map-placeholder">
+          <div class="map-grid"></div>
+          <div class="map-pin"><i class="fas fa-map-marker-alt"></i></div>
+          <div style="position:relative;z-index:1;text-align:center;">
+            <div style="font-weight:600;color:var(--gold);">Chrss.G Main Office</div>
+            <div style="font-size:0.85rem;">Posta Road, Kariakoo, Dar es Salaam</div>
+            <div style="font-size:0.78rem;margin-top:0.3rem;color:var(--muted);">-6.8235, 39.2695</div>
+            <button class="btn-action btn-gold" style="margin-top:1rem;" onclick="openGoogleMaps()"><i class="fas fa-external-link-alt"></i> Open in Google Maps</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ADMIN: BOARDING POINTS -->
+      <div class="page" id="page-admin-boarding">
+        <div class="section-header"><span class="section-title">Boarding & Dropping Points</span></div>
+        <div class="card">
+          <div style="overflow-x:auto;">
+            <table class="data-table">
+              <thead><tr><th>Passenger</th><th>Route</th><th>Boarding Point</th><th>Dropping Point</th><th>Date</th><th>Ticket</th></tr></thead>
+              <tbody>
+                <tr><td>Amina Juma</td><td>DSM → Arusha</td><td>📍 Ubungo Terminal</td><td>📍 Arusha CBD</td><td>Dec 15, 2024</td><td><span style="font-family:'JetBrains Mono';font-size:0.8rem;color:var(--gold);">#TKT-0041</span></td></tr>
+                <tr><td>James Mwangi</td><td>DSM → Mwanza</td><td>📍 Kariakoo</td><td>📍 Mwanza Port</td><td>Dec 16, 2024</td><td><span style="font-family:'JetBrains Mono';font-size:0.8rem;color:var(--gold);">#TKT-0040</span></td></tr>
+                <tr><td>Fatuma Hassan</td><td>Arusha → Moshi</td><td>📍 Arusha Clock Tower</td><td>📍 Moshi KCMC</td><td>Dec 17, 2024</td><td><span style="font-family:'JetBrains Mono';font-size:0.8rem;color:var(--gold);">#TKT-0039</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ======== USER PAGES ======== -->
+
+      <!-- USER DASHBOARD -->
+      <div class="page" id="page-user-dashboard">
+        <div class="stats-grid">
+          <div class="stat-card"><div class="stat-icon gold"><i class="fas fa-ticket-alt"></i></div><div class="stat-card-num" id="userTicketCount">3</div><div class="stat-card-label">My Bookings</div></div>
+          <div class="stat-card"><div class="stat-icon blue"><i class="fas fa-road"></i></div><div class="stat-card-num">2,460</div><div class="stat-card-label">km Traveled</div></div>
+          <div class="stat-card"><div class="stat-icon green"><i class="fas fa-wallet"></i></div><div class="stat-card-num">TZS 98K</div><div class="stat-card-label">Total Spent</div></div>
+        </div>
+        <div class="two-col">
+          <div class="form-section">
+            <div class="form-title"><i class="fas fa-bus"></i> Quick Book</div>
+            <div class="input-group"><label class="input-label">From</label><select class="select-input"><option>Dar es Salaam</option><option>Arusha</option><option>Mwanza</option><option>Dodoma</option></select></div>
+            <div class="input-group"><label class="input-label">To</label><select class="select-input"><option>Arusha</option><option>Dar es Salaam</option><option>Mwanza</option><option>Dodoma</option></select></div>
+            <div class="input-group"><label class="input-label">Travel Date</label><input class="text-input" type="date"></div>
+            <div class="input-group"><label class="input-label">Ticket Class</label><select class="select-input"><option>Regular — TZS 28,000</option><option>VIP — TZS 45,000</option></select></div>
+            <button class="btn-action btn-gold" onclick="showPage('page-user-seats')"><i class="fas fa-search"></i> Search & Select Seat</button>
+          </div>
+          <div class="form-section">
+            <div class="form-title"><i class="fas fa-history"></i> Recent Trips</div>
+            <div style="display:flex;flex-direction:column;gap:0.8rem;">
+              <div style="background:rgba(0,0,0,0.3);border-radius:10px;padding:0.8rem;">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                  <div><div style="font-weight:600;font-size:0.9rem;">DSM → Arusha</div><div style="font-size:0.75rem;color:var(--muted);">Dec 10, 2024 · Seat 12A · VIP</div></div>
+                  <span class="badge badge-green">Completed</span>
+                </div>
+              </div>
+              <div style="background:rgba(0,0,0,0.3);border-radius:10px;padding:0.8rem;">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                  <div><div style="font-weight:600;font-size:0.9rem;">Arusha → Moshi</div><div style="font-size:0.75rem;color:var(--muted);">Nov 22, 2024 · Seat 3B · Regular</div></div>
+                  <span class="badge badge-green">Completed</span>
+                </div>
+              </div>
+              <div style="background:rgba(0,0,0,0.3);border-radius:10px;padding:0.8rem;">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                  <div><div style="font-weight:600;font-size:0.9rem;">DSM → Dodoma</div><div style="font-size:0.75rem;color:var(--muted);">Upcoming — Dec 28, 2024</div></div>
+                  <span class="badge badge-gold">Upcoming</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- USER: SEAT SELECTION -->
+      <div class="page" id="page-user-seats">
+        <div class="section-header"><span class="section-title">Select Your Seat</span><span class="section-badge">DSM → Arusha | 48 Seats</span></div>
+        <div class="two-col">
+          <div>
+            <div class="seat-map-container">
+              <div class="bus-front">▲ FRONT OF BUS — CHRSS.G COMPANY</div>
+              <div class="driver-area"><div class="driver-seat"><i class="fas fa-steering-wheel"></i></div></div>
+              <div class="seat-grid" id="seatGrid"></div>
+              <div class="seat-legend">
+                <div class="legend-item"><div class="legend-dot" style="border-color:rgba(255,255,255,0.3);background:rgba(255,255,255,0.05);"></div>Available</div>
+                <div class="legend-item"><div class="legend-dot" style="border-color:var(--gold);background:rgba(201,168,76,0.3);"></div>Selected</div>
+                <div class="legend-item"><div class="legend-dot" style="border-color:rgba(192,57,43,0.5);background:rgba(192,57,43,0.15);"></div>Booked</div>
+                <div class="legend-item"><div class="legend-dot" style="border-color:rgba(155,89,182,0.6);background:rgba(155,89,182,0.1);"></div>VIP</div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="form-section">
+              <div class="form-title"><i class="fas fa-map-pin"></i> Journey Details</div>
+              <div class="input-group"><label class="input-label">Boarding Point</label><input class="text-input" id="boardingPt" placeholder="e.g. Ubungo Terminal, DSM"></div>
+              <div class="input-group"><label class="input-label">Dropping Point</label><input class="text-input" id="droppingPt" placeholder="e.g. Arusha CBD Bus Stand"></div>
+              <div class="route-visual">
+                <div class="route-dot"></div>
+                <div class="route-line"></div>
+                <div class="route-dot-end"></div>
+              </div>
+              <div style="margin-top:1rem;padding:1rem;background:rgba(0,0,0,0.3);border-radius:10px;">
+                <div style="font-size:0.8rem;color:var(--muted);">Selected Seat</div>
+                <div style="font-size:1.4rem;font-family:'Playfair Display',serif;font-weight:700;color:var(--gold);" id="selectedSeatDisplay">—</div>
+                <div style="font-size:0.8rem;color:var(--muted);margin-top:0.5rem;">Amount Due</div>
+                <div style="font-size:1.2rem;font-weight:600;" id="amountDue">TZS 0</div>
+              </div>
+              <button class="btn-action btn-gold" style="margin-top:1rem;width:100%;justify-content:center;" onclick="proceedToPayment()"><i class="fas fa-credit-card"></i> Proceed to Payment</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- USER: PAYMENT -->
+      <div class="page" id="page-user-payment">
+        <div class="section-header"><span class="section-title">Payment</span></div>
+        <div class="two-col">
+          <div>
+            <div class="form-section">
+              <div class="form-title"><i class="fas fa-mobile-alt"></i> Mobile Payment</div>
+              <div class="payment-methods">
+                <div class="pay-method selected" onclick="selectPayMethod(this)"><div class="pay-method-logo">💚</div><div class="pay-method-name">M-Pesa</div></div>
+                <div class="pay-method" onclick="selectPayMethod(this)"><div class="pay-method-logo">🔴</div><div class="pay-method-name">Airtel Money</div></div>
+                <div class="pay-method" onclick="selectPayMethod(this)"><div class="pay-method-logo">🔵</div><div class="pay-method-name">Tigo Pesa</div></div>
+                <div class="pay-method" onclick="selectPayMethod(this)"><div class="pay-method-logo">🟡</div><div class="pay-method-name">HaloPesa</div></div>
+              </div>
+              <div class="input-group"><label class="input-label">Mobile Number</label><input class="text-input" id="payPhone" placeholder="+255 7XX XXX XXX"></div>
+              <div style="background:rgba(201,168,76,0.08);border:1px solid var(--border);border-radius:10px;padding:1rem;margin-bottom:1rem;">
+                <div style="display:flex;justify-content:space-between;margin-bottom:0.4rem;"><span style="color:var(--muted);font-size:0.85rem;">Route</span><span style="font-size:0.85rem;">DSM → Arusha</span></div>
+                <div style="display:flex;justify-content:space-between;margin-bottom:0.4rem;"><span style="color:var(--muted);font-size:0.85rem;">Seat</span><span style="font-size:0.85rem;" id="paymentSeat">12A</span></div>
+                <div style="display:flex;justify-content:space-between;margin-bottom:0.4rem;"><span style="color:var(--muted);font-size:0.85rem;">Class</span><span class="badge badge-gold">VIP</span></div>
+                <div class="gold-divider"></div>
+                <div style="display:flex;justify-content:space-between;"><span style="font-weight:700;">Total</span><span style="font-weight:700;color:var(--gold);font-size:1.1rem;">TZS 45,000</span></div>
+              </div>
+              <button class="btn-action btn-gold" style="width:100%;justify-content:center;" onclick="processPayment()"><i class="fas fa-lock"></i> Pay Securely Now</button>
+            </div>
+          </div>
+          <div>
+            <div class="form-section">
+              <div class="form-title"><i class="fas fa-qrcode"></i> Chrss.G QR Code</div>
+              <div style="text-align:center;padding:1rem;">
+                <div class="qr-container" id="qrContainer">
+                  <div id="qrCode"></div>
+                </div>
+                <div style="margin-top:0.8rem;font-size:0.8rem;color:var(--muted);">Scan to verify your ticket</div>
+                <div style="font-family:'JetBrains Mono';font-size:0.85rem;color:var(--gold);margin-top:0.4rem;">CHRSS-G-TKT-0041</div>
+              </div>
+            </div>
+            <div class="form-section">
+              <div class="form-title"><i class="fas fa-shield-check"></i> Secure Payment</div>
+              <div style="font-size:0.82rem;color:var(--muted);line-height:1.9;">
+                🔒 256-bit SSL encrypted<br>
+                📲 You'll receive an SMS confirmation<br>
+                🎫 E-ticket sent to your email<br>
+                ♻️ Refunds within 24hrs of travel date
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- USER: PROFILE -->
+      <div class="page" id="page-user-profile">
+        <div class="section-header"><span class="section-title">My Profile</span></div>
+        <div class="two-col">
+          <div class="form-section">
+            <div class="profile-avatar-lg" id="profileAvatar">U</div>
+            <div style="text-align:center;margin-bottom:1.5rem;">
+              <div style="font-size:1.2rem;font-weight:700;" id="profileName">Passenger User</div>
+              <div style="font-size:0.8rem;color:var(--gold);">Active Member</div>
+            </div>
+            <div class="input-group"><label class="input-label">Full Name</label><input class="text-input" id="profileFullName" value="Passenger User"></div>
+            <div class="input-group"><label class="input-label">Email</label><input class="text-input" id="profileEmailEdit" value="user@email.com"></div>
+            <div class="input-group"><label class="input-label">Phone Number</label><input class="text-input" id="profilePhone" value="+255 712 000 001"></div>
+            <div class="input-group"><label class="input-label">ID Number</label><input class="text-input" placeholder="National ID / Passport"></div>
+            <button class="btn-action btn-gold" onclick="saveProfile()"><i class="fas fa-save"></i> Update Profile</button>
+          </div>
+          <div class="form-section">
+            <div class="form-title"><i class="fas fa-lock"></i> Change Password</div>
+            <div class="input-group"><label class="input-label">Current Password</label><input class="text-input" type="password"></div>
+            <div class="input-group"><label class="input-label">New Password</label><input class="text-input" type="password"></div>
+            <div class="input-group"><label class="input-label">Confirm Password</label><input class="text-input" type="password"></div>
+            <button class="btn-action btn-gold"><i class="fas fa-key"></i> Update Password</button>
+            <div class="gold-divider"></div>
+            <div class="form-title"><i class="fas fa-bell"></i> Notifications</div>
+            <div style="display:flex;flex-direction:column;gap:0.8rem;font-size:0.9rem;">
+              <label style="display:flex;align-items:center;gap:0.7rem;cursor:pointer;"><input type="checkbox" checked style="accent-color:var(--gold);width:16px;height:16px;"> SMS Booking Confirmation</label>
+              <label style="display:flex;align-items:center;gap:0.7rem;cursor:pointer;"><input type="checkbox" checked style="accent-color:var(--gold);width:16px;height:16px;"> Email Receipts</label>
+              <label style="display:flex;align-items:center;gap:0.7rem;cursor:pointer;"><input type="checkbox" style="accent-color:var(--gold);width:16px;height:16px;"> Promotional Offers</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- USER: SNACKS VIEW -->
+      <div class="page" id="page-user-snacks">
+        <div class="section-header"><span class="section-title">In-Journey Snacks & Meals</span></div>
+        <div style="background:rgba(201,168,76,0.08);border:1px solid var(--border);border-radius:12px;padding:1rem;margin-bottom:1.5rem;display:flex;align-items:center;gap:0.8rem;">
+          <i class="fas fa-info-circle" style="color:var(--gold);font-size:1.2rem;"></i>
+          <div style="font-size:0.9rem;">Snacks are complimentary for <strong>VIP class</strong> passengers. Regular class passengers receive water and biscuits.</div>
+        </div>
+        <div class="snack-grid">
+          <div class="snack-card"><div class="snack-emoji">🥤</div><div class="snack-name">Mineral Water</div><div class="snack-note">500ml — All classes</div></div>
+          <div class="snack-card"><div class="snack-emoji">🧃</div><div class="snack-name">Juice Box</div><div class="snack-note">Mango/Orange — VIP</div></div>
+          <div class="snack-card"><div class="snack-emoji">🍫</div><div class="snack-name">Chocolate Bar</div><div class="snack-note">Biscoff/Kit-Kat — VIP</div></div>
+          <div class="snack-card"><div class="snack-emoji">🥪</div><div class="snack-name">Sandwich</div><div class="snack-note">Chicken/Veg — VIP</div></div>
+          <div class="snack-card"><div class="snack-emoji">🍌</div><div class="snack-name">Fresh Fruit</div><div class="snack-note">Seasonal — VIP</div></div>
+          <div class="snack-card"><div class="snack-emoji">🍪</div><div class="snack-name">Biscuits Pack</div><div class="snack-note">Marie/Digestive — Regular</div></div>
+          <div class="snack-card"><div class="snack-emoji">☕</div><div class="snack-name">Tea/Coffee</div><div class="snack-note">Hot beverages — VIP</div></div>
+        </div>
+      </div>
+
+      <!-- USER: COMMENT / REVIEW -->
+      <div class="page" id="page-user-review">
+        <div class="section-header"><span class="section-title">Rate Our Service</span></div>
+        <div class="form-section" style="max-width:600px;">
+          <div class="form-title"><i class="fas fa-star"></i> Leave a Review</div>
+          <div class="input-group"><label class="input-label">Select Trip</label><select class="select-input"><option>DSM → Arusha · Dec 10, 2024</option><option>Arusha → Moshi · Nov 22, 2024</option></select></div>
+          <div class="input-group">
+            <label class="input-label">Rating</label>
+            <div style="display:flex;gap:0.5rem;font-size:2rem;margin-top:0.3rem;" id="starRating">
+              <span class="star" data-val="1" onclick="setRating(1)" style="cursor:pointer;color:var(--gold);">★</span>
+              <span class="star" data-val="2" onclick="setRating(2)" style="cursor:pointer;color:var(--gold);">★</span>
+              <span class="star" data-val="3" onclick="setRating(3)" style="cursor:pointer;color:var(--gold);">★</span>
+              <span class="star" data-val="4" onclick="setRating(4)" style="cursor:pointer;color:var(--gold);">★</span>
+              <span class="star" data-val="5" onclick="setRating(5)" style="cursor:pointer;color:rgba(255,255,255,0.2);">★</span>
+            </div>
+          </div>
+          <div class="input-group"><label class="input-label">Your Comment</label><textarea class="textarea-input" id="reviewText" placeholder="Tell us about your experience — driver, comfort, punctuality, snacks..."></textarea></div>
+          <button class="btn-action btn-gold" onclick="submitReview()"><i class="fas fa-paper-plane"></i> Submit Review</button>
+        </div>
+        <div class="gold-divider"></div>
+        <div class="section-title" style="margin-bottom:1rem;">Recent Reviews</div>
+        <div style="display:flex;flex-direction:column;gap:1rem;max-width:600px;">
+          <div style="background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:12px;padding:1.2rem;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;"><span style="font-weight:600;">Amina Juma</span><span style="color:var(--gold);">★★★★★</span></div>
+            <div style="font-size:0.85rem;color:rgba(255,255,255,0.7);line-height:1.7;">Excellent service! The VIP seats were super comfortable and snacks were great. Driver was professional and punctual.</div>
+            <div style="font-size:0.72rem;color:var(--muted);margin-top:0.5rem;">DSM → Arusha · Dec 10, 2024</div>
+          </div>
+          <div style="background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:12px;padding:1.2rem;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;"><span style="font-weight:600;">James Mwangi</span><span style="color:var(--gold);">★★★★<span style="color:rgba(255,255,255,0.2);">★</span></span></div>
+            <div style="font-size:0.85rem;color:rgba(255,255,255,0.7);line-height:1.7;">Good journey overall. Bus was clean and comfortable. Would recommend Chrss.G to everyone!</div>
+            <div style="font-size:0.72rem;color:var(--muted);margin-top:0.5rem;">DSM → Mwanza · Nov 30, 2024</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- USER: CONTACT -->
+      <div class="page" id="page-user-contact">
+        <div class="section-header"><span class="section-title">Contact Us</span></div>
+        <div class="two-col">
+          <div class="form-section">
+            <div class="form-title"><i class="fas fa-envelope"></i> Send Message</div>
+            <div class="input-group"><label class="input-label">Subject</label><input class="text-input" placeholder="Booking issue, refund, etc."></div>
+            <div class="input-group"><label class="input-label">Message</label><textarea class="textarea-input" placeholder="Describe your issue or inquiry..."></textarea></div>
+            <button class="btn-action btn-gold" onclick="showSuccess('Message sent! We\'ll respond within 2 hours.')"><i class="fas fa-paper-plane"></i> Send Message</button>
+          </div>
+          <div class="form-section">
+            <div class="form-title"><i class="fas fa-phone"></i> Contact Details</div>
+            <div style="display:flex;flex-direction:column;gap:1rem;">
+              <div style="display:flex;align-items:center;gap:0.8rem;padding:0.8rem;background:rgba(0,0,0,0.3);border-radius:10px;"><i class="fas fa-phone" style="color:var(--gold);width:18px;"></i><div><div style="font-size:0.8rem;color:var(--muted);">Phone</div><div>+255 712 345 678</div></div></div>
+              <div style="display:flex;align-items:center;gap:0.8rem;padding:0.8rem;background:rgba(0,0,0,0.3);border-radius:10px;"><i class="fab fa-whatsapp" style="color:#25d366;width:18px;"></i><div><div style="font-size:0.8rem;color:var(--muted);">WhatsApp</div><div>+255 712 345 678</div></div></div>
+              <div style="display:flex;align-items:center;gap:0.8rem;padding:0.8rem;background:rgba(0,0,0,0.3);border-radius:10px;"><i class="fas fa-envelope" style="color:var(--gold);width:18px;"></i><div><div style="font-size:0.8rem;color:var(--muted);">Email</div><div>support@chrssg.co.tz</div></div></div>
+              <div style="display:flex;align-items:center;gap:0.8rem;padding:0.8rem;background:rgba(0,0,0,0.3);border-radius:10px;"><i class="fas fa-clock" style="color:var(--gold);width:18px;"></i><div><div style="font-size:0.8rem;color:var(--muted);">Office Hours</div><div>Mon–Sat 7AM – 8PM</div></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end main-content -->
+  </div><!-- end app-layout -->
+</div><!-- end app -->
+
+<!-- ===== POPUPS ===== -->
+<div class="popup-overlay" id="popupOverlay" onclick="closePopup()"></div>
+<div class="popup-success" id="popupSuccess">
+  <div style="font-size:3rem;margin-bottom:0.8rem;" id="popupIcon">✅</div>
+  <div style="font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;margin-bottom:0.5rem;" id="popupTitle">Success!</div>
+  <div style="font-size:0.9rem;color:rgba(255,255,255,0.7);line-height:1.6;" id="popupMsg">Operation completed.</div>
+  <button class="btn-action btn-gold" style="margin-top:1.2rem;" onclick="closePopup()">OK</button>
+</div>
+
+<!-- COLOR SWITCHER -->
+<div class="color-switcher">
+  <div style="background:rgba(11,28,61,0.8);border:1px solid var(--border);border-radius:50px;padding:0.5rem;display:flex;flex-direction:column;gap:0.4rem;align-items:center;">
+    <div style="font-size:0.55rem;color:var(--muted);letter-spacing:0.1em;text-align:center;margin-bottom:0.2rem;">THEME</div>
+    <div class="color-dot" style="background:#C9A84C;" onclick="setTheme('theme-gold')" title="Gold"></div>
+    <div class="color-dot" style="background:#2ecc71;" onclick="setTheme('theme-emerald')" title="Emerald"></div>
+    <div class="color-dot" style="background:#3498db;" onclick="setTheme('theme-sapphire')" title="Sapphire"></div>
+    <div class="color-dot" style="background:#e74c3c;" onclick="setTheme('theme-ruby')" title="Ruby"></div>
+  </div>
+</div>
+
+<script>
+// ===== STATE =====
+let currentRole = 'user';
+let currentUser = {};
+let selectedSeat = null;
+let selectedPayMethod = 'M-Pesa';
+let userRating = 4;
+
+// ===== SAMPLE DATA =====
+const users = [{name:'Amina Juma',email:'amina@gmail.com',phone:'+255 712 111 222',pass:'pass123'},{name:'James Mwangi',email:'james@email.com',phone:'+255 754 222 333',pass:'pass123'}];
+const bookedSeats = [3,7,11,15,19,23,27,31,35,39,1,2];
+const vipSeats = [1,2,3,4,5,6,7,8];
+
+// ===== TOPBAR DATE =====
+document.getElementById('topbarDate').textContent = new Date().toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short',year:'numeric'});
+
+// ===== AUTH =====
+function openLogin(){document.getElementById('loginModal').classList.add('active');}
+function openRegister(){document.getElementById('registerModal').classList.add('active');}
+function closeAllModals(){document.querySelectorAll('.modal-overlay').forEach(m=>m.classList.remove('active'));}
+function switchToRegister(){closeAllModals();openRegister();}
+function switchToLogin(){closeAllModals();openLogin();}
+function setRole(role,btn){currentRole=role;document.querySelectorAll('.role-tab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');}
+
+function doLogin(){
+  const email=document.getElementById('loginEmail').value;
+  const pass=document.getElementById('loginPass').value;
+  if(!email||!pass){showSuccess('Please enter email and password','⚠️','Warning');return;}
+  if(currentRole==='admin'){
+    if(email==='admin'&&pass==='admin123'){
+      currentUser={name:'Administrator',role:'admin',email:'admin@chrssg.co.tz'};
+      launchApp('admin');
+    }else{showSuccess('Invalid admin credentials','❌','Error');}
+  } else {
+    const u=users.find(u=>u.email===email&&u.pass===pass)||users[0];
+    currentUser={name:u?u.name:'Passenger',role:'user',email:email,phone:u?u.phone:''};
+    launchApp('user');
+  }
+}
+
+function doRegister(){
+  const first=document.getElementById('regFirst').value;
+  const last=document.getElementById('regLast').value;
+  const email=document.getElementById('regEmail').value;
+  const phone=document.getElementById('regPhone').value;
+  if(!first||!email||!phone){showSuccess('Please fill all required fields','⚠️','Warning');return;}
+  currentUser={name:`${first} ${last}`,role:'user',email,phone};
+  users.push({name:currentUser.name,email,phone,pass:document.getElementById('regPass').value});
+  launchApp('user');
+}
+
+function launchApp(role){
+  closeAllModals();
+  document.getElementById('landing').style.display='none';
+  document.getElementById('app').classList.add('active');
+  buildSidebar(role);
+  updateUserUI();
+  if(role==='admin'){showPage('page-admin-dashboard');document.getElementById('topbarBadge').textContent='ADMIN';}
+  else{showPage('page-user-dashboard');document.getElementById('topbarBadge').textContent='PASSENGER';buildSeatMap();}
+  buildQR();
+}
+
+function doLogout(){
+  document.getElementById('app').classList.remove('active');
+  document.getElementById('landing').style.display='';
+  currentUser={};
+}
+
+function updateUserUI(){
+  const init=currentUser.name?currentUser.name.charAt(0).toUpperCase():'U';
+  document.getElementById('sidebarAvatar').textContent=init;
+  document.getElementById('sidebarName').textContent=currentUser.name||'User';
+  document.getElementById('sidebarRole').textContent=currentUser.role==='admin'?'Administrator':'Passenger';
+  if(document.getElementById('profileAvatar'))document.getElementById('profileAvatar').textContent=init;
+  if(document.getElementById('profileName'))document.getElementById('profileName').textContent=currentUser.name;
+  if(document.getElementById('profileFullName'))document.getElementById('profileFullName').value=currentUser.name||'';
+  if(document.getElementById('profileEmailEdit'))document.getElementById('profileEmailEdit').value=currentUser.email||'';
+  if(document.getElementById('profilePhone'))document.getElementById('profilePhone').value=currentUser.phone||'';
+}
+
+// ===== SIDEBAR =====
+function buildSidebar(role){
+  const nav=document.getElementById('sidebarNav');
+  const adminNav=[
+    {section:'Main'},
+    {icon:'fas fa-chart-line',label:'Dashboard',page:'page-admin-dashboard'},
+    {icon:'fas fa-route',label:'Manage Routes',page:'page-admin-routes'},
+    {icon:'fas fa-ticket-alt',label:'Ticket Pricing',page:'page-admin-tickets'},
+    {section:'Fleet'},
+    {icon:'fas fa-bus',label:'Bus Fleet',page:'page-admin-buses'},
+    {icon:'fas fa-cookie-bite',label:'Snacks Menu',page:'page-admin-snacks'},
+    {section:'Operations'},
+    {icon:'fas fa-map-marker-alt',label:'Office Location',page:'page-admin-location'},
+    {icon:'fas fa-exchange-alt',label:'Boarding Points',page:'page-admin-boarding'},
+    {icon:'fas fa-comments',label:'Messages',page:'page-admin-messages'},
+    {section:'Admin'},
+    {icon:'fas fa-cog',label:'Settings',page:'page-admin-settings'},
+  ];
+  const userNav=[
+    {section:'Menu'},
+    {icon:'fas fa-home',label:'Dashboard',page:'page-user-dashboard'},
+    {icon:'fas fa-chair',label:'Select Seat',page:'page-user-seats'},
+    {icon:'fas fa-credit-card',label:'Payment',page:'page-user-payment'},
+    {section:'More'},
+    {icon:'fas fa-cookie-bite',label:'In-Bus Snacks',page:'page-user-snacks'},
+    {icon:'fas fa-star',label:'Rate Service',page:'page-user-review'},
+    {icon:'fas fa-envelope',label:'Contact Us',page:'page-user-contact'},
+    {section:'Account'},
+    {icon:'fas fa-user',label:'My Profile',page:'page-user-profile'},
+  ];
+  const items=role==='admin'?adminNav:userNav;
+  nav.innerHTML=items.map(item=>
+    item.section?`<div class="nav-section">${item.section}</div>`:
+    `<div class="nav-item" onclick="showPage('${item.page}')" id="nav-${item.page}"><i class="${item.icon}"></i>${item.label}</div>`
+  ).join('');
+}
+
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  const pg=document.getElementById(id);
+  if(pg)pg.classList.add('active');
+  const ni=document.getElementById('nav-'+id);
+  if(ni)ni.classList.add('active');
+  const titles={
+    'page-admin-dashboard':'Dashboard','page-admin-routes':'Manage Routes','page-admin-tickets':'Ticket Pricing',
+    'page-admin-buses':'Bus Fleet','page-admin-snacks':'Snacks Menu','page-admin-location':'Office Location',
+    'page-admin-boarding':'Boarding Points','page-admin-messages':'Messages','page-admin-settings':'Settings',
+    'page-user-dashboard':'Dashboard','page-user-seats':'Seat Selection','page-user-payment':'Payment',
+    'page-user-snacks':'In-Bus Snacks','page-user-review':'Rate Service','page-user-contact':'Contact Us',
+    'page-user-profile':'My Profile'
+  };
+  document.getElementById('topbarTitle').textContent=titles[id]||'Dashboard';
+}
+
+// ===== SEAT MAP =====
+function buildSeatMap(){
+  const grid=document.getElementById('seatGrid');
+  if(!grid)return;
+  grid.innerHTML='';
+  for(let row=0;row<12;row++){
+    for(let col=0;col<5;col++){
+      if(col===2){grid.innerHTML+='<div class="seat-aisle"></div>';continue;}
+      const seatNum=row*4+(col<2?col+1:col)+1-Math.floor((col<2?0:1));
+      const num=row*4+(col<2?col:col-1)+1;
+      const isBooked=bookedSeats.includes(num);
+      const isVip=vipSeats.includes(num);
+      const colLetter=['A','B','','C','D'][col];
+      const label=`${row+1}${colLetter}`;
+      let cls='seat ';
+      if(isBooked)cls+='booked';
+      else if(isVip)cls+='vip';
+      else cls+='available';
+      grid.innerHTML+=`<div class="${cls}" onclick="selectSeat(this,'${label}',${isVip?45000:28000},${isBooked})" title="Seat ${label}">${label}</div>`;
+    }
+  }
+}
+
+function selectSeat(el,label,price,booked){
+  if(booked)return;
+  document.querySelectorAll('.seat.selected').forEach(s=>{s.classList.remove('selected');s.classList.add('available');});
+  el.classList.remove('available','vip');el.classList.add('selected');
+  selectedSeat=label;
+  document.getElementById('selectedSeatDisplay').textContent=label;
+  document.getElementById('amountDue').textContent=`TZS ${price.toLocaleString()}`;
+  if(document.getElementById('paymentSeat'))document.getElementById('paymentSeat').textContent=label;
+}
+
+// ===== PAYMENT =====
+function selectPayMethod(el){
+  document.querySelectorAll('.pay-method').forEach(p=>p.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedPayMethod=el.querySelector('.pay-method-name').textContent;
+}
+
+function proceedToPayment(){
+  if(!selectedSeat){showSuccess('Please select a seat first','⚠️','Select Seat');return;}
+  const board=document.getElementById('boardingPt').value;
+  const drop=document.getElementById('droppingPt').value;
+  if(!board||!drop){showSuccess('Please enter boarding and dropping points','⚠️','Missing Info');return;}
+  showPage('page-user-payment');
+}
+
+function processPayment(){
+  const phone=document.getElementById('payPhone').value;
+  if(!phone){showSuccess('Please enter your mobile number','⚠️','Required');return;}
+  // Show spinner briefly
+  setTimeout(()=>{
+    showSMSPopup();
+    showSuccess(`Payment of TZS 45,000 received via ${selectedPayMethod}!\n\nTicket #TKT-0042 confirmed.\nSMS sent to ${phone}.`,'🎉','Booking Confirmed!');
+  },1200);
+}
+
+function showSMSPopup(){
+  const el=document.createElement('div');
+  el.className='sms-popup';
+  el.innerHTML=`<div class="sms-header"><i class="fas fa-sms"></i><strong>SMS Confirmation</strong></div><div class="sms-text">Chrss.G: Your booking is confirmed! Ticket #TKT-0042. Route: DSM→Arusha. Seat: ${selectedSeat||'12A'}. Date: Dec 28, 2024. Departure: 06:00 AM. Thank you!</div>`;
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(),5000);
+}
+
+// ===== QR CODE (simple pixel art) =====
+function buildQR(){
+  const qr=document.getElementById('qrCode');
+  if(!qr)return;
+  const pattern=[
+    1,1,1,1,1,1,1,0,1,1,0,
+    1,0,0,0,0,0,1,0,0,1,1,
+    1,0,1,1,1,0,1,0,1,0,1,
+    1,0,1,1,1,0,1,0,1,1,0,
+    1,0,1,1,1,0,1,0,0,1,1,
+    1,0,0,0,0,0,1,0,1,0,0,
+    1,1,1,1,1,1,1,0,1,0,1,
+    0,0,0,0,0,0,0,0,0,1,0,
+    1,0,1,1,0,1,1,0,1,1,1,
+    0,1,0,0,1,0,0,0,0,1,0,
+    1,1,0,1,1,0,1,0,1,0,1,
+  ];
+  qr.className='qr-grid';
+  qr.innerHTML=pattern.map(c=>`<div class="qr-cell" style="background:${c?'#000':'#fff'};width:18px;height:18px;"></div>`).join('');
+}
+
+// ===== ADMIN ACTIONS =====
+function showAddRouteForm(){document.getElementById('addRouteForm').style.display='block';}
+function saveRoute(){showSuccess('Route added successfully!','🛣️','Route Saved');document.getElementById('addRouteForm').style.display='none';}
+function showAddBusForm(){document.getElementById('addBusForm').style.display='block';}
+function saveBus(){
+  const gallery=document.getElementById('busGallery');
+  const card=document.createElement('div');card.className='bus-img-card';
+  card.innerHTML='<div class="bus-img-placeholder">🚌</div><div class="bus-img-info"><div class="bus-reg">New Bus</div><div class="bus-status">● Active</div></div>';
+  gallery.insertBefore(card,gallery.lastElementChild);
+  showSuccess('Bus registered successfully!','🚌','Bus Registered');
+  document.getElementById('addBusForm').style.display='none';
+}
+function addSnack(){
+  const emojis=['🥗','🍕','🥐','🍎','🍦','🥨','🍩'];
+  const names=['Salad','Mini Pizza','Croissant','Apple','Ice Cream','Pretzels','Donut'];
+  const i=Math.floor(Math.random()*emojis.length);
+  const grid=document.getElementById('snackGrid');
+  const card=document.createElement('div');card.className='snack-card';
+  card.innerHTML=`<div class="snack-emoji">${emojis[i]}</div><div class="snack-name">${names[i]}</div><div class="snack-note">New addition — VIP</div>`;
+  grid.insertBefore(card,grid.lastElementChild);
+  showSuccess(`${names[i]} added to snack menu!`,'🍽️','Snack Added');
+}
+function editTicketPrice(cls){showSuccess(`Editing ${cls} ticket price. Use the form below.`,'🎫','Edit Price');}
+function saveSettings(){showSuccess('Settings saved successfully!','✅','Settings Updated');}
+function sendAdminMsg(){const t=document.getElementById('msgText').value;if(!t){return;}const box=document.getElementById('adminChatBox');const d=new Date();const msg=document.createElement('div');msg.style.alignSelf='flex-end';msg.style.textAlign='right';msg.innerHTML=`<div class="msg-bubble msg-admin">${t}</div><div class="msg-time" style="padding-right:0.5rem;">Admin — ${d.getHours()}:${String(d.getMinutes()).padStart(2,'0')}</div>`;box.appendChild(msg);box.scrollTop=box.scrollHeight;document.getElementById('msgText').value='';showSuccess('Message sent successfully!','📤','Sent');}
+function viewUserDetails(name){showSuccess(`Viewing details for: ${name}\nEmail and booking history loaded.`,'👤','User Details');}
+function deleteUser(btn){if(confirm('Delete this user?')){btn.closest('tr').remove();showSuccess('User deleted.','🗑️','Deleted');}}
+function openGoogleMaps(){window.open('https://www.google.com/maps?q=-6.8235,39.2695','_blank');}
+
+// ===== USER ACTIONS =====
+function saveProfile(){showSuccess('Profile updated successfully!','👤','Profile Saved');}
+function setRating(val){
+  userRating=val;
+  document.querySelectorAll('.star').forEach((s,i)=>{s.style.color=i<val?'var(--gold)':'rgba(255,255,255,0.2)';});
+}
+function submitReview(){
+  const text=document.getElementById('reviewText').value;
+  if(!text){showSuccess('Please write a comment','⚠️','Required');return;}
+  showSuccess('Thank you for your review!','⭐','Review Submitted');
+  document.getElementById('reviewText').value='';
+}
+
+// ===== POPUP =====
+function showSuccess(msg,icon='✅',title='Success'){
+  document.getElementById('popupIcon').textContent=icon;
+  document.getElementById('popupTitle').textContent=title;
+  document.getElementById('popupMsg').textContent=msg;
+  document.getElementById('popupOverlay').classList.add('show');
+  document.getElementById('popupSuccess').classList.add('show');
+}
+function closePopup(){
+  document.getElementById('popupOverlay').classList.remove('show');
+  document.getElementById('popupSuccess').classList.remove('show');
+}
+
+// ===== THEME =====
+function setTheme(theme){
+  document.body.className='';
+  if(theme!=='theme-gold')document.body.classList.add(theme);
+}
+
+// ===== AUTO COLOR CYCLE =====
+const themes=['theme-gold','theme-emerald','theme-sapphire','theme-ruby'];
+let themeIdx=0;
+setInterval(()=>{
+  themeIdx=(themeIdx+1)%themes.length;
+  setTheme(themes[themeIdx]);
+}, 15000);
+
+// Demo: auto-login button on landing for quick access
+document.addEventListener('keydown',e=>{
+  if(e.key==='F2'){document.getElementById('loginEmail').value='admin';document.getElementById('loginPass').value='admin123';currentRole='admin';openLogin();}
+});
+</script>
+</body>
+</html>
